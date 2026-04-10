@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next'
+/** @type {import('next').NextConfig} */
 
 const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
@@ -23,7 +23,7 @@ const securityHeaders = [
   },
 ]
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   async headers() {
     return [
       {
@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
-      // Canonical: force www -> non-www redirect (adjust for your domain preference)
       {
         source: '/',
         has: [{ type: 'host', value: 'www.thinkbiz.solutions' }],
@@ -59,4 +58,4 @@ const nextConfig: NextConfig = {
   compress: true,
 }
 
-export default nextConfig
+module.exports = nextConfig
