@@ -74,10 +74,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={lato.variable}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
       <body className={`${lato.className} antialiased`}>
         {/* Skip navigation for keyboard/screen reader users */}
         <a href="#main-content" className="skip-nav">
