@@ -31,6 +31,7 @@ export const SITE_CONFIG = {
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
+  { label: 'Membership', href: '/membership' },
   { label: 'Networking Groups', href: '/networking-groups' },
   { label: 'Events', href: '/events' },
   { label: 'Blog', href: '/blog' },
