@@ -164,7 +164,6 @@ export function EventCalendar({ events, selectedDate, onSelectDate }: EventCalen
                   : cell.dateStr
               }
               aria-selected={isSelected}
-              aria-pressed={isClickable ? isSelected : undefined}
               tabIndex={isClickable ? 0 : -1}
               className={cellCls}
               onClick={() => handleDayClick(cell)}

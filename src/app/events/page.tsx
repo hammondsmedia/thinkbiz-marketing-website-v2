@@ -18,7 +18,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function EventsPage() {
   const upcomingCount = EVENTS.filter((e) => e.status === 'upcoming').length
-  const categories = [...new Set(EVENTS.map((e) => e.category))]
+  const categories = Array.from(new Set(EVENTS.map((e) => e.category)))
 
   return (
     <>
