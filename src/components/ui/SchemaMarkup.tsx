@@ -1,3 +1,4 @@
+import type { Event } from '@/types/event'
 import { SITE_CONFIG } from '@/lib/constants'
 
 interface OrganizationSchemaProps {
@@ -170,6 +171,70 @@ export function FAQSchema({ faqs }: FAQSchemaProps) {
         text: answer,
       },
     })),
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
+interface EventSchemaProps {
+  event: Event
+}
+
+export function EventSchema({ event }: EventSchemaProps) {
+  const locationObj = event.location.isOnline
+    ? { '@type': 'VirtualLocation', url: SITE_CONFIG.url }
+    : {
+        '@type': 'Place',
+        name: event.location.name,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: event.location.address,
+          addressLocality: event.location.city,
+          addressRegion: event.location.state,
+          postalCode: event.location.zip ?? '',
+          addressCountry: 'US',
+        },
+      }
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.title,
+    description: event.excerpt,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    eventStatus:
+      event.status === 'cancelled'
+        ? 'https://schema.org/EventCancelled'
+        : 'https://schema.org/EventScheduled',
+    eventAttendanceMode: event.location.isOnline
+      ? 'https://schema.org/OnlineEventAttendanceMode'
+      : 'https://schema.org/OfflineEventAttendanceMode',
+    location: locationObj,
+    organizer: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: event.cost.isFree ? '0' : String(event.cost.amount ?? 0),
+      priceCurrency: 'USD',
+      availability:
+        event.status === 'upcoming'
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/SoldOut',
+      url: event.cost.registrationUrl
+        ? `${SITE_CONFIG.url}${event.cost.registrationUrl}`
+        : `${SITE_CONFIG.url}/events/${event.slug}`,
+    },
+    ...(event.featureImage && { image: `${SITE_CONFIG.url}${event.featureImage}` }),
+    url: `${SITE_CONFIG.url}/events/${event.slug}`,
   }
 
   return (
