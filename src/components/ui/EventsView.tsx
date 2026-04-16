@@ -64,7 +64,7 @@ export function EventsView({ events }: EventsViewProps) {
   const pastCount = events.filter((e) => e.status === 'past').length
 
   const grouped = groupByDate(filteredEvents)
-  const sortedDateKeys = [...grouped.keys()].sort((a, b) => {
+  const sortedDateKeys = Array.from(grouped.keys()).sort((a, b) => {
     const dir = showPast && !selectedDate ? -1 : 1
     return dir * (new Date(a).getTime() - new Date(b).getTime())
   })
