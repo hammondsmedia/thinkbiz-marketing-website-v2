@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { SITE_CONFIG } from '@/lib/constants'
 import { BLOG_POSTS, AUTHORS } from '@/lib/blog-data'
 import { CLUBS, CLUB_MEMBERS } from '@/lib/club-data'
+import { EVENTS } from '@/lib/event-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url
@@ -81,5 +82,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }))
 
-  return [...staticPages, ...blogPages, ...authorPages, ...networkingGroupsPages, ...memberPages]
+  const eventPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/events`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    ...EVENTS.map((event) => ({
+      url: `${baseUrl}/events/${event.slug}`,
+      lastModified: new Date(event.startDate),
+      changeFrequency: 'weekly' as const,
+      priority: event.status === 'upcoming' ? 0.8 : 0.5,
+    })),
+  ]
+
+  return [...staticPages, ...blogPages, ...authorPages, ...networkingGroupsPages, ...memberPages, ...eventPages]
 }
