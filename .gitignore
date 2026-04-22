@@ -35,3 +35,34 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Skill symlinks for agents we don't use (canonical content lives in .agents/)
+/.adal/
+/.augment/
+/.bob/
+/.codebuddy/
+/.commandcode/
+/.continue/
+/.cortex/
+/.crush/
+/.factory/
+/.goose/
+/.iflow/
+/.junie/
+/.kilocode/
+/.kiro/
+/.kode/
+/.mcpjam/
+/.mux/
+/.neovate/
+/.openhands/
+/.pi/
+/.pochi/
+/.qoder/
+/.qwen/
+/.roo/
+/.trae/
+/.vibe/
+/.windsurf/
+/.zencoder/
+/skills/
