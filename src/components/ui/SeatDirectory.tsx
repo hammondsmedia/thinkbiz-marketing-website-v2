@@ -1,14 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import type { Club, IndustrySeat } from '@/types/club'
-import { getMemberById } from '@/lib/club-data'
+import type { Club, ClubMember, IndustrySeat } from '@/types/club'
+
+type SeatWithMember = IndustrySeat & { member?: ClubMember }
 
 interface SeatDirectoryProps {
   club: Club
+  seats: SeatWithMember[]
 }
 
-function FilledSeat({ seat }: { seat: IndustrySeat }) {
-  const member = seat.memberId ? getMemberById(seat.memberId) : undefined
+function FilledSeat({ seat }: { seat: SeatWithMember }) {
+  const member = seat.member
   if (!member) return null
 
   return (
@@ -96,9 +98,9 @@ function OpenSeat({ seat, clubSlug }: { seat: IndustrySeat; clubSlug: string }) 
   )
 }
 
-export function SeatDirectory({ club }: SeatDirectoryProps) {
-  const filledSeats = club.seats.filter((s) => s.status === 'filled')
-  const openSeats = club.seats.filter((s) => s.status === 'open')
+export function SeatDirectory({ club, seats }: SeatDirectoryProps) {
+  const filledSeats = seats.filter((s) => s.status === 'filled')
+  const openSeats = seats.filter((s) => s.status === 'open')
 
   return (
     <section aria-labelledby="directory-heading">
@@ -133,7 +135,7 @@ export function SeatDirectory({ club }: SeatDirectoryProps) {
         aria-label={`${club.name} industry seats`}
       >
         {/* Filled seats first */}
-        {club.seats.map((seat) =>
+        {seats.map((seat) =>
           seat.status === 'filled' ? (
             <div key={seat.industrySlug} role="listitem">
               <FilledSeat seat={seat} />

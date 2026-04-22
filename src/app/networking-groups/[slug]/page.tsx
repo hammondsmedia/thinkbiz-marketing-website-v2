@@ -2,25 +2,34 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CLUBS, getClubBySlug, getClubMembers, getMemberById } from '@/lib/club-data'
+import { getAllClubs, getClubPageData } from '@/lib/clubs'
 import { SITE_CONFIG } from '@/lib/constants'
 import { buildMetadata } from '@/lib/metadata'
-import { BreadcrumbSchema, LocalBusinessSchema } from '@/components/ui/SchemaMarkup'
+import { BreadcrumbSchema } from '@/components/ui/SchemaMarkup'
 import { SeatDirectory } from '@/components/ui/SeatDirectory'
 import { MemberCard } from '@/components/ui/MemberCard'
 import { PreRegisterForm } from '@/components/ui/PreRegisterForm'
+
+export const revalidate = 60
 
 interface ClubPageProps {
   params: { slug: string }
 }
 
 export async function generateStaticParams() {
-  return CLUBS.map((club) => ({ slug: club.slug }))
+  try {
+    const clubs = await getAllClubs()
+    return clubs.map((club) => ({ slug: club.slug }))
+  } catch {
+    // Supabase unreachable at build time — pages render on demand via ISR.
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
-  const club = getClubBySlug(params.slug)
-  if (!club) return {}
+  const data = await getClubPageData(params.slug)
+  if (!data) return {}
+  const { club } = data
 
   return buildMetadata({
     title: `${club.name} | Networking Groups`,
@@ -31,13 +40,12 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
   })
 }
 
-export default function ClubPage({ params }: ClubPageProps) {
-  const club = getClubBySlug(params.slug)
-  if (!club) notFound()
+export default async function ClubPage({ params }: ClubPageProps) {
+  const data = await getClubPageData(params.slug)
+  if (!data) notFound()
 
-  const members = getClubMembers(club)
-  const president = club.presidentId ? getMemberById(club.presidentId) : undefined
-  const openSeats = club.seats.filter((s) => s.status === 'open')
+  const { club, members, president, seats } = data
+  const openSeats = seats.filter((s) => s.status === 'open')
 
   const breadcrumbs = [
     { name: 'Home', url: SITE_CONFIG.url },
@@ -170,7 +178,7 @@ export default function ClubPage({ params }: ClubPageProps) {
       {/* ─── SEAT DIRECTORY ───────────────────────────────────────────────────── */}
       <section id="directory" className="py-12 lg:py-16 bg-white" aria-labelledby="directory-heading">
         <div className="container-site">
-          <SeatDirectory club={club} />
+          <SeatDirectory club={club} seats={seats} />
         </div>
       </section>
 

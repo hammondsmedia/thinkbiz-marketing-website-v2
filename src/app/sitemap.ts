@@ -1,11 +1,17 @@
 import type { MetadataRoute } from 'next'
 import { SITE_CONFIG } from '@/lib/constants'
 import { BLOG_POSTS, AUTHORS } from '@/lib/blog-data'
-import { CLUBS, CLUB_MEMBERS } from '@/lib/club-data'
+import { getAllClubs, getAllMembers } from '@/lib/clubs'
 import { EVENTS } from '@/lib/event-data'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 60
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_CONFIG.url
+  const [clubs, members] = await Promise.all([
+    getAllClubs().catch(() => []),
+    getAllMembers().catch(() => []),
+  ])
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -73,7 +79,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    ...CLUBS.map((club) => ({
+    ...clubs.map((club) => ({
       url: `${baseUrl}/networking-groups/${club.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
@@ -81,7 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ]
 
-  const memberPages: MetadataRoute.Sitemap = CLUB_MEMBERS.map((member) => ({
+  const memberPages: MetadataRoute.Sitemap = members.map((member) => ({
     url: `${baseUrl}/club-members/${member.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
