@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:types": "supabase gen types typescript --project-id basrdqwpynzaepmhdbze > src/types/supabase.ts",
+    "supabase:upload-assets": "tsx scripts/upload-marketing-assets.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
@@ -15,6 +17,7 @@
     "next": "14.2.29",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
@@ -25,7 +28,9 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.29",
     "postcss": "^8.4.47",
+    "supabase": "^2.93.0",
     "tailwindcss": "^3.4.12",
+    "tsx": "^4.21.0",
     "typescript": "^5.6.2"
   }
 }

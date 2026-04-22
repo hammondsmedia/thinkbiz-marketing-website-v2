@@ -4,7 +4,9 @@ import { Section, SectionHeader } from '@/components/ui/Section'
 import { ClubCard } from '@/components/ui/ClubCard'
 import { OrganizationSchema, FAQSchema } from '@/components/ui/SchemaMarkup'
 import { SITE_CONFIG } from '@/lib/constants'
-import { CLUBS } from '@/lib/club-data'
+import { getAllClubs } from '@/lib/clubs'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Networking Groups',
@@ -37,9 +39,10 @@ const PAGE_FAQS = [
   },
 ]
 
-export default function NetworkingGroupsPage() {
-  const totalOpenSeats = CLUBS.reduce((sum, c) => sum + c.openSeats, 0)
-  const totalMembers = CLUBS.reduce((sum, c) => sum + c.memberCount, 0)
+export default async function NetworkingGroupsPage() {
+  const clubs = await getAllClubs().catch(() => [])
+  const totalOpenSeats = clubs.reduce((sum, c) => sum + c.openSeats, 0)
+  const totalMembers = clubs.reduce((sum, c) => sum + c.memberCount, 0)
 
   return (
     <>
@@ -83,7 +86,7 @@ export default function NetworkingGroupsPage() {
             {/* Stats bar */}
             <div className="flex flex-wrap gap-8">
               {[
-                { number: CLUBS.length.toString(), label: 'Active Chapters' },
+                { number: clubs.length.toString(), label: 'Active Chapters' },
                 { number: totalMembers.toString() + '+', label: 'Members' },
                 { number: totalOpenSeats.toString(), label: 'Open Seats' },
               ].map(({ number, label }) => (
@@ -105,7 +108,7 @@ export default function NetworkingGroupsPage() {
               Active Chapters
             </h2>
             <p className="text-gray-500 text-sm mt-1">
-              {CLUBS.length} chapters &middot; {totalOpenSeats} open seats available
+              {clubs.length} chapters &middot; {totalOpenSeats} open seats available
             </p>
           </div>
           <Link href="/contact" className="btn-primary text-sm py-2.5 self-start sm:self-auto" aria-label="Contact us about starting a new chapter">
@@ -114,7 +117,7 @@ export default function NetworkingGroupsPage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {CLUBS.map((club) => (
+          {clubs.map((club) => (
             <ClubCard key={club.id} club={club} />
           ))}
         </div>

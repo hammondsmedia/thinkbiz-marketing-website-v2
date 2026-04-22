@@ -1,10 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import type { Database } from '@/types/supabase'
 
 export function createClient() {
   const cookieStore = cookies()
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
@@ -25,5 +27,15 @@ export function createClient() {
         },
       },
     }
+  )
+}
+
+// Cookie-free client for contexts outside a request (generateStaticParams,
+// sitemap, build-time metadata). Reads are bound by RLS policies for `anon`.
+export function createPublicClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { persistSession: false } }
   )
 }

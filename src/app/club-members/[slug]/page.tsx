@@ -2,23 +2,32 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CLUB_MEMBERS, getMemberBySlug, getMemberClubs } from '@/lib/club-data'
+import { getAllMembers, getMemberPageData } from '@/lib/clubs'
 import { SITE_CONFIG } from '@/lib/constants'
 import { buildMetadata } from '@/lib/metadata'
 import { BreadcrumbSchema } from '@/components/ui/SchemaMarkup'
 import { formatDate } from '@/lib/utils'
+
+export const revalidate = 60
 
 interface MemberPageProps {
   params: { slug: string }
 }
 
 export async function generateStaticParams() {
-  return CLUB_MEMBERS.map((m) => ({ slug: m.slug }))
+  try {
+    const members = await getAllMembers()
+    return members.map((m) => ({ slug: m.slug }))
+  } catch {
+    // Supabase unreachable at build time — pages render on demand via ISR.
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: MemberPageProps): Promise<Metadata> {
-  const member = getMemberBySlug(params.slug)
-  if (!member) return {}
+  const data = await getMemberPageData(params.slug)
+  if (!data) return {}
+  const { member } = data
 
   return buildMetadata({
     title: `${member.name} — ${member.industry}`,
@@ -42,11 +51,11 @@ const RoleBadgeColors: Record<string, string> = {
   'Member': 'bg-gray-100 text-gray-600',
 }
 
-export default function MemberProfilePage({ params }: MemberPageProps) {
-  const member = getMemberBySlug(params.slug)
-  if (!member) notFound()
+export default async function MemberProfilePage({ params }: MemberPageProps) {
+  const data = await getMemberPageData(params.slug)
+  if (!data) notFound()
 
-  const clubs = getMemberClubs(member)
+  const { member, clubs } = data
   const memberUrl = `${SITE_CONFIG.url}/club-members/${member.slug}`
 
   const breadcrumbs = [
