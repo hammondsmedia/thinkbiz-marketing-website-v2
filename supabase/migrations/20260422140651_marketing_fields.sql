@@ -50,12 +50,23 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- ─── industries: canonical dropdown list ─────────────────────────────────────
+-- Single source of truth for valid industry categories. Club seats reference
+-- this table via FK on industry_slug. Seeded in supabase/seed/marketing.sql.
+CREATE TABLE IF NOT EXISTS public.industries (
+  slug text PRIMARY KEY,
+  name text NOT NULL UNIQUE,
+  sort_order int DEFAULT 0,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now()
+);
+
 -- ─── club_seats: industry seat inventory per club ─────────────────────────────
 CREATE TABLE IF NOT EXISTS public.club_seats (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   club_id uuid NOT NULL REFERENCES public.clubs(id) ON DELETE CASCADE,
   industry text NOT NULL,
-  industry_slug text NOT NULL,
+  industry_slug text NOT NULL REFERENCES public.industries(slug),
   status text NOT NULL DEFAULT 'open' CHECK (status IN ('open','filled')),
   member_id uuid REFERENCES public.members(id) ON DELETE SET NULL,
   sort_order int DEFAULT 0,
