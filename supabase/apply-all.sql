@@ -460,9 +460,11 @@ ON CONFLICT (email) DO UPDATE SET
 
 -- OKC North (7 filled, 5 open)
 INSERT INTO public.club_seats (club_id, industry, industry_slug, status, member_id, sort_order)
-SELECT c.id, v.industry, v.industry_slug, v.status,
-       (SELECT id FROM public.members WHERE email = v.member_email),
-       v.sort_order
+SELECT
+  (SELECT id FROM public.clubs WHERE slug = 'okc-north'),
+  t.industry, t.industry_slug, t.status,
+  (SELECT id FROM public.members WHERE email = t.member_email),
+  t.sort_order
 FROM (VALUES
   ('Digital Marketing', 'digital-marketing', 'filled', 'garrett-hammonds@thinkbiz-seed.local', 1),
   ('Tax Advisor/Tax CPA', 'tax-advisor-tax-cpa', 'filled', 'sarah-martinez@thinkbiz-seed.local', 2),
@@ -476,9 +478,7 @@ FROM (VALUES
   ('Commercial Real Estate', 'commercial-real-estate', 'open', NULL, 10),
   ('Chiropractor', 'chiropractor', 'open', NULL, 11),
   ('Title Services', 'title-services', 'open', NULL, 12)
-) AS v(industry, industry_slug, status, member_email, sort_order),
-     public.clubs c
-WHERE c.slug = 'okc-north'
+) AS t(industry, industry_slug, status, member_email, sort_order)
 ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
@@ -487,9 +487,11 @@ ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SE
 
 -- OKC South (4 filled, 6 open)
 INSERT INTO public.club_seats (club_id, industry, industry_slug, status, member_id, sort_order)
-SELECT c.id, v.industry, v.industry_slug, v.status,
-       (SELECT id FROM public.members WHERE email = v.member_email),
-       v.sort_order
+SELECT
+  (SELECT id FROM public.clubs WHERE slug = 'okc-south'),
+  t.industry, t.industry_slug, t.status,
+  (SELECT id FROM public.members WHERE email = t.member_email),
+  t.sort_order
 FROM (VALUES
   ('Roofing & Gutters', 'roofing-gutters', 'filled', 'david-nguyen@thinkbiz-seed.local', 1),
   ('Estate Planning Law', 'estate-planning-law', 'filled', 'amara-williams@thinkbiz-seed.local', 2),
@@ -501,9 +503,7 @@ FROM (VALUES
   ('Web Design & Development', 'web-design-development', 'open', NULL, 8),
   ('Financial Advisor/Life Insurance', 'financial-advisor-life-insurance', 'open', NULL, 9),
   ('Cleaning Service', 'cleaning-service', 'open', NULL, 10)
-) AS v(industry, industry_slug, status, member_email, sort_order),
-     public.clubs c
-WHERE c.slug = 'okc-south'
+) AS t(industry, industry_slug, status, member_email, sort_order)
 ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
@@ -512,9 +512,11 @@ ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SE
 
 -- Edmond (2 filled, 8 open)
 INSERT INTO public.club_seats (club_id, industry, industry_slug, status, member_id, sort_order)
-SELECT c.id, v.industry, v.industry_slug, v.status,
-       (SELECT id FROM public.members WHERE email = v.member_email),
-       v.sort_order
+SELECT
+  (SELECT id FROM public.clubs WHERE slug = 'edmond'),
+  t.industry, t.industry_slug, t.status,
+  (SELECT id FROM public.members WHERE email = t.member_email),
+  t.sort_order
 FROM (VALUES
   ('HVAC – Heating & Air', 'hvac-heating-air', 'filled', 'mike-patterson@thinkbiz-seed.local', 1),
   ('Photographer', 'photographer', 'filled', 'taylor-reed@thinkbiz-seed.local', 2),
@@ -526,9 +528,7 @@ FROM (VALUES
   ('Financial Advisor/Life Insurance', 'financial-advisor-life-insurance', 'open', NULL, 8),
   ('Landscape Services', 'landscape-services', 'open', NULL, 9),
   ('Personal Trainer – Fitness', 'personal-trainer-fitness', 'open', NULL, 10)
-) AS v(industry, industry_slug, status, member_email, sort_order),
-     public.clubs c
-WHERE c.slug = 'edmond'
+) AS t(industry, industry_slug, status, member_email, sort_order)
 ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
