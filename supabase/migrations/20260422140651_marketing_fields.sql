@@ -59,9 +59,15 @@ CREATE TABLE IF NOT EXISTS public.club_seats (
   status text NOT NULL DEFAULT 'open' CHECK (status IN ('open','filled')),
   member_id uuid REFERENCES public.members(id) ON DELETE SET NULL,
   sort_order int DEFAULT 0,
-  created_at timestamptz DEFAULT now(),
-  UNIQUE (club_id, industry_slug)
+  created_at timestamptz DEFAULT now()
 );
+
+-- One seat per (club, industry) EXCEPT 'other' — "Other" allows multiple
+-- members per club. Partial unique index instead of a table constraint
+-- because Postgres constraints can't have a WHERE clause.
+CREATE UNIQUE INDEX IF NOT EXISTS club_seats_club_id_industry_slug_key
+  ON public.club_seats (club_id, industry_slug)
+  WHERE industry_slug <> 'other';
 
 CREATE INDEX IF NOT EXISTS club_seats_club_id_idx ON public.club_seats (club_id);
 CREATE INDEX IF NOT EXISTS club_seats_member_id_idx ON public.club_seats (member_id);
