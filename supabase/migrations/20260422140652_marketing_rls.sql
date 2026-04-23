@@ -37,3 +37,14 @@ CREATE POLICY "public seats readable"
       WHERE c.id = club_seats.club_id AND c.is_public = true
     )
   );
+
+-- Industries is reference data. Public can read any active row so the
+-- Join-a-Chapter dropdown and "hide taken seats" logic both work from the
+-- anon client. Writes stay service-role-only (no INSERT/UPDATE/DELETE policy).
+ALTER TABLE public.industries ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public industries readable" ON public.industries;
+CREATE POLICY "public industries readable"
+  ON public.industries
+  FOR SELECT
+  TO anon
+  USING (is_active = true);
