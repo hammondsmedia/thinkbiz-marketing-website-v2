@@ -269,7 +269,7 @@ FROM (VALUES
 ) AS v(industry, industry_slug, status, member_email, sort_order),
      public.clubs c
 WHERE c.slug = 'okc-north'
-ON CONFLICT (club_id, industry_slug) DO UPDATE SET
+ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
   member_id = EXCLUDED.member_id,
@@ -294,7 +294,7 @@ FROM (VALUES
 ) AS v(industry, industry_slug, status, member_email, sort_order),
      public.clubs c
 WHERE c.slug = 'okc-south'
-ON CONFLICT (club_id, industry_slug) DO UPDATE SET
+ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
   member_id = EXCLUDED.member_id,
@@ -319,7 +319,7 @@ FROM (VALUES
 ) AS v(industry, industry_slug, status, member_email, sort_order),
      public.clubs c
 WHERE c.slug = 'edmond'
-ON CONFLICT (club_id, industry_slug) DO UPDATE SET
+ON CONFLICT (club_id, industry_slug) WHERE industry_slug <> 'other' DO UPDATE SET
   industry = EXCLUDED.industry,
   status = EXCLUDED.status,
   member_id = EXCLUDED.member_id,
