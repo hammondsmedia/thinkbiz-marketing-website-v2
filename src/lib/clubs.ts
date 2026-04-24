@@ -44,7 +44,7 @@ function mapMemberRow(row: MemberRow, clubSlug?: string): ClubMember {
     role: row.role ?? 'Member',
     bio: row.bio ?? '',
     shortBio: fallbackShort,
-    avatar: row.member_headshot || '/assets/logos/thinkbiz-emblem-logo.svg',
+    avatar: row.member_headshot || '/assets/avatars/person-placeholder.svg',
     linkedin: row.linkedin_url ?? undefined,
     website: row.website_url ?? undefined,
     phone: undefined,
