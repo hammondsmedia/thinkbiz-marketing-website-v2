@@ -275,7 +275,7 @@ ON CONFLICT (slug) DO UPDATE SET
 -- Format: one UPSERT per member. current_club_id resolved from clubs.slug.
 
 INSERT INTO public.members
-  (email, slug, first_name, last_name, company_name, title, industry, role,
+  (email, slug, first_name, last_name, company_name, title, club_seat, role,
    bio, short_bio, member_headshot, linkedin_url, website_url,
    core_skills, testimonial, member_since,
    current_club_id, is_active, is_public)
@@ -441,7 +441,7 @@ ON CONFLICT (email) DO UPDATE SET
   last_name = EXCLUDED.last_name,
   company_name = EXCLUDED.company_name,
   title = EXCLUDED.title,
-  industry = EXCLUDED.industry,
+  club_seat = EXCLUDED.club_seat,
   role = EXCLUDED.role,
   bio = EXCLUDED.bio,
   short_bio = EXCLUDED.short_bio,
