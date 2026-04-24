@@ -85,7 +85,7 @@ function mapClubRow(row: ClubRow, seats: IndustrySeat[], members: ClubMember[]):
     meetingFrequency: row.meeting_frequency ?? 'Weekly',
     description: row.description ?? '',
     shortDescription: row.short_description ?? '',
-    featureImage: row.feature_image ?? '',
+    featureImage: row.feature_image || '/assets/illustrations/team-work-illustration.svg',
     mapUrl: row.map_url ?? '',
     established: row.established ? String(row.established) : '',
     memberCount,
